@@ -1,0 +1,41 @@
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+int moistureSensor = 0;
+int moisture_val;
+
+int dataToSend[] = {0};
+
+RF24 radio(9, 10); // CE, CSN
+const byte address[6] = "00001";
+
+void setup() {
+  Serial.begin(9600);
+  pinMode (7, OUTPUT);// put your setup code here, to run once:
+
+  radio.begin();
+  radio.openWritingPipe(address);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.stopListening();
+}
+
+void loop() {
+moisture_val = analogRead(moistureSensor);
+Serial.print("moisture reads");
+Serial.println( moisture_val);
+
+/*delay(1000);
+if (moisture_val < 600){
+  digitalWrite (7, HIGH);// put your main code here, to run repeatedly:
+}else{
+  digitalWrite (7, LOW);
+}*/
+
+    dataToSend[0] = moisture_val;
+    //const char text[] = "Hello World";
+    radio.write(dataToSend, sizeof(dataToSend));
+    delay(100);
+  
+
+}
